@@ -59,7 +59,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          yarn --prod
+          yarn install --frozen-lockfile 
           yarn build
+          yarn --prod
           yarn semantic-release
 
