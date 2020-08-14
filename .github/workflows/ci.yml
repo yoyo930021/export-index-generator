@@ -44,10 +44,6 @@ jobs:
           yarn test
         env:
           CI: true
-      - name: codecov
-        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '10.x'
-        run: |
-          yarn codecov --token="${{ secrets.CODECOV_TOKEN }}"
   release:
     needs: [lint, test]
     runs-on: ubuntu-latest
