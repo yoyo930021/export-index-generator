@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test generator generate [] 1`] = `
+Object {
+  "content": "",
+  "scriptKind": 1,
+}
+`;
+
+exports[`test generator generate fixture/ex1 1`] = `
+Object {
+  "content": "export { Test5, Test6, default as Test7 } from './class'
+export { Test16, Test17 } from './enum'
+export type { Test13, default as Test15 } from './export'
+export { Test14 } from './export'
+export { test8, test9, test10 } from './function'
+export type { Test2, Test3, default as Test4 } from './interface'
+export type { Test11, Test12 } from './type'
+",
+  "scriptKind": 3,
+}
+`;

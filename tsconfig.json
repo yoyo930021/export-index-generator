@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es6",
+    "module": "commonjs",
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "node",
+    "types": [
+      "node",
+      "jest"
+    ],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true
+  },
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
+}
