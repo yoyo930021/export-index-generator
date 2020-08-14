@@ -13,6 +13,12 @@
   "bin": {
     "generate-index": "./bin/generate-index"
   },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "commander": "^6.0.0",
     "fast-glob": "^3.2.4",
