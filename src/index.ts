@@ -63,7 +63,7 @@ program
       fg
         .sync(`**/*.${extension}`, { cwd: cwdPath }).filter((file) => !/^index\.[jt]{1}sx{0,1}$/.test(file))
         .map((path) => ({ path, content: readFileSync(resolve(cwd, path), { encoding: 'utf8' }) }))
-    console.log(files)
+
     const result = generate(tsModule, files)
     updateOrCreateFile(
       getCurrentCommand(!!cmd.external, cwd),
