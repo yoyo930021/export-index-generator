@@ -8,7 +8,7 @@ Generate index file for JavaScript/TypeScript Library.
 - [x] only update area for manual case.
 
 
-## Usage
+## usage
 ```
 Usage: generate-index [options] <cwd>
 
