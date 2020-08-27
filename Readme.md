@@ -7,12 +7,13 @@ Generate index file for JavaScript/TypeScript Library.
 - [x] recursive.
 - [x] only update area for manual case.
 
-
-## usage
+## install
 ```
 npm install --dev export-index-generator # or
 yarn add -D export-index-generator
 ```
+
+## usage
 
 ```
 Usage: generate-index [options] <cwd>
