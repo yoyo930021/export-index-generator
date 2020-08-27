@@ -10,6 +10,11 @@ Generate index file for JavaScript/TypeScript Library.
 
 ## usage
 ```
+npm install --dev export-index-generator # or
+yarn add -D export-index-generator
+```
+
+```
 Usage: generate-index [options] <cwd>
 
 generate typescript or javascript index file
