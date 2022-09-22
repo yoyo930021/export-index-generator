@@ -19,11 +19,17 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
   const isTypeOnlyExports = exports.filter((item) => item.isTypeOnly)
   const otherExports = exports.filter((item) => !item.isTypeOnly)
 
-  const createExportSpecifier = (item: ExportModule) =>
-    tsModule.createExportSpecifier(
-      item.default ? tsModule.createIdentifier('default') : undefined,
-      tsModule.createIdentifier(item.name)
-    )
+  const createExportSpecifier = (item: ExportModule) => {
+    const propertyName = item.default ? tsModule.createIdentifier('default') : undefined
+
+    const [major, minor] = tsModule.version.split('.')
+    if ((Number(major) === 4 && Number(minor) >= 5) || Number(major) > 4) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      return tsModule.createExportSpecifier(undefined, propertyName, tsModule.createIdentifier(item.name))
+    }
+    return tsModule.createExportSpecifier(propertyName, tsModule.createIdentifier(item.name))
+  }
 
   const createExportDeclaration = (input: ExportModule[], isOnlyType: boolean) =>
     tsModule.createExportDeclaration(
