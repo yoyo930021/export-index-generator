@@ -29,7 +29,7 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
       return tsModule.factory.createExportSpecifier(undefined, propertyName, tsModule.factory.createIdentifier(item.name))
     }
-    if ((Number(major) === 4 && Number(minor) >= 5) || Number(major) > 4) {
+    if ((Number(major) === 4 && Number(minor) >= 5)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return tsModule.createExportSpecifier(undefined, propertyName, tsModule.createIdentifier(item.name))
