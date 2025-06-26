@@ -15,7 +15,6 @@ const removeNoNeedExtension = (path: string): string => {
 }
 
 const generateExports = (tsModule: typeof ts, path: string, exports: ExportModule[]): ts.ExportDeclaration[] => {
-  console.log(123)
   const result: ts.ExportDeclaration[] = []
   const isTypeOnlyExports = exports.filter((item) => item.isTypeOnly)
   const otherExports = exports.filter((item) => !item.isTypeOnly)
