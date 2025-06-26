@@ -23,7 +23,13 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
     const propertyName = item.default ? tsModule.createIdentifier('default') : undefined
 
     const [major, minor] = tsModule.version.split('.')
-    if ((Number(major) === 4 && Number(minor) >= 5) || Number(major) > 4) {
+    if ((Number(major) === 5)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-return
+      return tsModule.factory.createExportSpecifier(undefined, propertyName, tsModule.factory.createIdentifier(item.name))
+    }
+    if ((Number(major) === 4 && Number(minor) >= 5)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       return tsModule.createExportSpecifier(undefined, propertyName, tsModule.createIdentifier(item.name))
@@ -31,8 +37,28 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
     return tsModule.createExportSpecifier(propertyName, tsModule.createIdentifier(item.name))
   }
 
-  const createExportDeclaration = (input: ExportModule[], isOnlyType: boolean) =>
-    tsModule.createExportDeclaration(
+  const createExportDeclaration = (input: ExportModule[], isOnlyType: boolean) => {
+    const [major] = tsModule.version.split('.')
+    if ((Number(major) === 5)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      return tsModule.factory.createExportDeclaration(
+        undefined,
+        isOnlyType,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        tsModule.factory.createNamedExports(
+          input.map(createExportSpecifier)
+        ),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        tsModule.factory.createStringLiteral(`./${removeNoNeedExtension(path)}`)
+      )
+    }
+    return tsModule.createExportDeclaration(
       undefined,
       undefined,
       tsModule.createNamedExports(
@@ -41,6 +67,7 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
       tsModule.createStringLiteral(`./${removeNoNeedExtension(path)}`),
       isOnlyType
     )
+  }
 
   if (isTypeOnlyExports.length > 0) {
     result.push(createExportDeclaration(isTypeOnlyExports, true))
@@ -87,9 +114,19 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
   )
 
   const printer = tsModule.createPrinter()
+  const updateSourceFileNode = (sourceFile: ts.SourceFile, statements: ts.ExportDeclaration[]) => {
+    const [major] = tsModule.version.split('.')
+    if ((Number(major) === 5)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      return tsModule.factory.updateSourceFile(sourceFile, statements)
+    }
+    return tsModule.updateSourceFileNode(sourceFile, statements)
+  }
 
   return {
-    content: printer.printFile(tsModule.updateSourceFileNode(sourceFile, statements)).replace(/;/g, '').replace(/"/g, '\''),
+    content: printer.printFile(updateSourceFileNode(sourceFile, statements)).replace(/;/g, '').replace(/"/g, '\''),
     scriptKind
   }
 }
