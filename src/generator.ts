@@ -20,9 +20,18 @@ const generateExports = (tsModule: typeof ts, path: string, exports: ExportModul
   const otherExports = exports.filter((item) => !item.isTypeOnly)
 
   const createExportSpecifier = (item: ExportModule) => {
-    const propertyName = item.default ? tsModule.createIdentifier('default') : undefined
-
     const [major, minor] = tsModule.version.split('.')
+    const createIdentifier = (text: string): ts.Identifier => {
+      if (Number(major) === 5) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+        return tsModule.factory.createIdentifier(text)
+      }
+      return tsModule.createIdentifier(text)
+    }
+    const propertyName = item.default ? createIdentifier('default') : undefined
+
     if ((Number(major) === 5)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
