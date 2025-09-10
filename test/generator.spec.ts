@@ -23,4 +23,18 @@ describe('test generator', () => {
       expect(generate(ts, files)).toMatchSnapshot()
     })
   }
+
+  it('should throw error when duplicate export names exist', () => {
+    const files = [
+      {
+        path: 'a.ts',
+        content: 'export const foo = 1;'
+      },
+      {
+        path: 'b.ts',
+        content: 'export const foo = 2;'
+      }
+    ]
+    expect(() => generate(ts, files)).toThrow(/Duplicate export name/)
+  })
 })

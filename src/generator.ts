@@ -95,6 +95,7 @@ export interface File {
 }
 
 export const generate = (tsModule: typeof ts, files: File[]): { content: string, scriptKind: ts.ScriptKind } => {
+  const allExportedNames = new Set<string>()
   const scriptKind = (() => {
     if (files.some((file) => extname(file.path) === '.tsx')) return tsModule.ScriptKind.TSX
     if (files.some((file) => extname(file.path) === '.ts')) return tsModule.ScriptKind.TS
@@ -117,11 +118,16 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
 
       // Script
       const exports = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content))
+      const exportedNames = exports.map((exp: { name: string, isTypeOnly: boolean, default: boolean }) => exp.name)
+      const duplicated = exportedNames.filter(name => allExportedNames.has(name))
+      if (duplicated.length > 0) {
+        throw new Error(`Duplicate export name(s) found: ${duplicated.join(', ')}`)
+      }
+      exportedNames.forEach(name => allExportedNames.add(name))
       return result.concat(generateExports(tsModule, file.path, exports))
     },
     [] as ts.ExportDeclaration[]
   )
-
   const printer = tsModule.createPrinter()
   const updateSourceFileNode = (sourceFile: ts.SourceFile, statements: ts.ExportDeclaration[]) => {
     const [major] = tsModule.version.split('.')
