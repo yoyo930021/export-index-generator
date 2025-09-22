@@ -1,4 +1,4 @@
-import { FileProgram, ExportModule } from './types'
+import { FileProgram, ExportModule, ExportAnalysisResult } from './types'
 import type ts from 'typescript'
 import { basename, extname } from 'path'
 
@@ -56,14 +56,14 @@ export const getDefaultName = (tsModule: typeof ts, symbol: ts.Symbol, fileName:
   return fileName
 }
 
-export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): ExportModule[] => {
+export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram, allExportedNames: Set<string>): ExportAnalysisResult => {
   const { ast, program } = fileProgram
   const typeChecker = program.getTypeChecker()
 
   const symbol = typeChecker.getSymbolAtLocation(ast)
-  if (!symbol || !symbol.exports) return []
+  if (!symbol || !symbol.exports) return { exports: [], duplicatedNames: [] }
 
-  return Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>)
+  const moduleExports = Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>)
     .map((item) => {
       if (item.name === 'default') {
         return {
@@ -75,6 +75,20 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
 
       return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
     })
+
+  const exportedNames = moduleExports.map(exp => exp.name)
+  const duplicatedNames = exportedNames.filter(name => allExportedNames.has(name))
+
+  if (duplicatedNames.length > 0) {
+    throw new Error(`Duplicate export name(s) found: ${duplicatedNames.join(', ')}`)
+  }
+
+  exportedNames.forEach(name => allExportedNames.add(name))
+
+  return {
+    exports: moduleExports,
+    duplicatedNames: []
+  }
 }
 
 export const getExternalExports = (path: string): ExportModule[] => {

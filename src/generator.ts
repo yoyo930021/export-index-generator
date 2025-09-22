@@ -117,14 +117,8 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
       if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path)))
 
       // Script
-      const exports = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content))
-      const exportedNames = exports.map((exp: { name: string, isTypeOnly: boolean, default: boolean }) => exp.name)
-      const duplicated = exportedNames.filter(name => allExportedNames.has(name))
-      if (duplicated.length > 0) {
-        throw new Error(`Duplicate export name(s) found: ${duplicated.join(', ')}`)
-      }
-      exportedNames.forEach(name => allExportedNames.add(name))
-      return result.concat(generateExports(tsModule, file.path, exports))
+      const analysisResult = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content), allExportedNames)
+      return result.concat(generateExports(tsModule, file.path, analysisResult.exports))
     },
     [] as ts.ExportDeclaration[]
   )
