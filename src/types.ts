@@ -10,8 +10,3 @@ export interface ExportModule {
   isTypeOnly: boolean
   default: boolean
 }
-
-export interface ExportAnalysisResult {
-  exports: ExportModule[]
-  duplicatedNames: string[]
-}
