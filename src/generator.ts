@@ -121,6 +121,7 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
     },
     [] as ts.ExportDeclaration[]
   )
+
   const printer = tsModule.createPrinter()
   const updateSourceFileNode = (sourceFile: ts.SourceFile, statements: ts.ExportDeclaration[]) => {
     const [major] = tsModule.version.split('.')
