@@ -76,7 +76,6 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
       if (allExportedNames.has(item.name)) {
         throw new Error(`Duplicate export name found: ${item.name} in file ${ast.fileName}`)
       }
-      allExportedNames.add(item.name)
       return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
     })
 }
