@@ -64,7 +64,7 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
   const symbol = typeChecker.getSymbolAtLocation(ast)
   if (!symbol || !symbol.exports) return []
 
-  const moduleExports = Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>)
+  return Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>)
     .map((item) => {
       if (item.name === 'default') {
         return {
@@ -73,20 +73,12 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
           default: true
         }
       }
-
+      if (allExportedNames.has(item.name)) {
+        throw new Error(`Duplicate export name found: ${item.name} in file ${ast.fileName}`)
+      }
+      allExportedNames.add(item.name)
       return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
     })
-
-  const exportedNames = moduleExports.map(exp => exp.name)
-  const duplicatedNames = exportedNames.filter(name => allExportedNames.has(name))
-
-  if (duplicatedNames.length > 0) {
-    throw new Error(`Duplicate export name(s) found: ${duplicatedNames.join(', ')}`)
-  }
-
-  exportedNames.forEach(name => allExportedNames.add(name))
-
-  return moduleExports
 }
 
 export const getExternalExports = (path: string): ExportModule[] => {
