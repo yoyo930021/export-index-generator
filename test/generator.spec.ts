@@ -16,7 +16,8 @@ const loadTypeScript = (specifier: string): TsModule =>
 
 const typeScriptVariants: Array<{ label: string, ts: TsModule }> = [
   { label: 'TypeScript 3.9', ts: loadTypeScript('typescript') },
-  { label: 'TypeScript 4.9', ts: loadTypeScript('typescript-4-9') }
+  { label: 'TypeScript 4.9', ts: loadTypeScript('typescript-4-9') },
+  { label: 'TypeScript 5.9', ts: loadTypeScript('typescript-5-9') }
 ]
 
 for (const { label, ts } of typeScriptVariants) {
