@@ -23,4 +23,29 @@ describe('test generator', () => {
       expect(generate(ts, files)).toMatchSnapshot()
     })
   }
+
+  it('should throw error when duplicate export names exist across files', () => {
+    const files = [
+      {
+        path: 'a.ts',
+        content: 'export const foo = 1;'
+      },
+      {
+        path: 'b.ts',
+        content: 'export const foo = 2;'
+      }
+    ]
+    expect(() => generate(ts, files)).toThrow(/Duplicate export name/)
+  })
+
+  it('should throw error when duplicate export names exist within same file', () => {
+    const files = [
+      {
+        path: 'duplicate.ts',
+        content: `export enum GameType {}
+export enum GameType { A = 1 }`
+      }
+    ]
+    expect(() => generate(ts, files)).toThrow(/Duplicate export name found: GameType/)
+  })
 })

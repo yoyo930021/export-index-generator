@@ -55,7 +55,7 @@ export const getDefaultName = (tsModule: typeof ts, symbol: ts.Symbol, fileName:
 
   return fileName
 }
-
+const allExportedNames = new Set<string>()
 export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): ExportModule[] => {
   const { ast, program } = fileProgram
   const typeChecker = program.getTypeChecker()
@@ -72,7 +72,10 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
           default: true
         }
       }
-
+      if ((item.declarations && item.declarations.length > 1) || allExportedNames.has(item.name)) {
+        throw new Error(`Duplicate export name found: ${item.name} in file ${ast.fileName}`)
+      }
+      allExportedNames.add(item.name)
       return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
     })
 }
