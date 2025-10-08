@@ -10,7 +10,7 @@ Generate index file for JavaScript/TypeScript Library.
 ## install
 ```
 npm install --dev export-index-generator # or
-yarn add -D export-index-generator
+pnpm add -D export-index-generator
 ```
 
 ## usage
