@@ -94,7 +94,7 @@ export interface File {
   content: string
 }
 
-export const generate = (tsModule: typeof ts, files: File[]): { content: string, scriptKind: ts.ScriptKind } => {
+export const generate = (tsModule: typeof ts, files: File[], detectDuplicate = false): { content: string, scriptKind: ts.ScriptKind } => {
   const scriptKind = (() => {
     if (files.some((file) => extname(file.path) === '.tsx')) return tsModule.ScriptKind.TSX
     if (files.some((file) => extname(file.path) === '.ts')) return tsModule.ScriptKind.TS
@@ -117,7 +117,12 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
       if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path)))
 
       // Script
-      const exports = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content), allExportedNames)
+      const exports = analyzeExports(
+        tsModule,
+        getSingleFileProgram(tsModule, basename(file.path), file.content),
+        allExportedNames,
+        detectDuplicate
+      )
       return result.concat(generateExports(tsModule, file.path, exports))
     },
     [] as ts.ExportDeclaration[]
