@@ -110,13 +110,16 @@ export const generate = (tsModule: typeof ts, files: File[], detectDuplicate = f
     scriptKind
   )
 
-  const allExportedNames = new Set<string>()
+  let allExportedNames: Set<string> | null = null
   const statements = files.reduce(
     (result, file) => {
       // External
       if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path)))
 
       // Script
+      if (detectDuplicate && !allExportedNames) {
+        allExportedNames = new Set<string>()
+      }
       const exports = analyzeExports(
         tsModule,
         getSingleFileProgram(tsModule, basename(file.path), file.content),
