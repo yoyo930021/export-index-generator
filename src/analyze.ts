@@ -72,7 +72,7 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram, al
           default: true
         }
       }
-      if (allExportedNames.has(item.name)) {
+      if ((item.declarations && item.declarations.length > 1) || allExportedNames.has(item.name)) {
         throw new Error(`Duplicate export name found: ${item.name} in file ${ast.fileName}`)
       }
       return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
