@@ -110,13 +110,14 @@ export const generate = (tsModule: typeof ts, files: File[]): { content: string,
     scriptKind
   )
 
+  const allExportedNames = new Set<string>()
   const statements = files.reduce(
     (result, file) => {
       // External
       if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path)))
 
       // Script
-      const exports = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content))
+      const exports = analyzeExports(tsModule, getSingleFileProgram(tsModule, basename(file.path), file.content), allExportedNames)
       return result.concat(generateExports(tsModule, file.path, exports))
     },
     [] as ts.ExportDeclaration[]

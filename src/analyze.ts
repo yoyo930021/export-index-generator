@@ -56,8 +56,7 @@ export const getDefaultName = (tsModule: typeof ts, symbol: ts.Symbol, fileName:
   return fileName
 }
 
-const allExportedNames = new Set<string>()
-export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): ExportModule[] => {
+export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram, allExportedNames: Set<string>): ExportModule[] => {
   const { ast, program } = fileProgram
   const typeChecker = program.getTypeChecker()
 
