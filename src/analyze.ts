@@ -56,7 +56,12 @@ export const getDefaultName = (tsModule: typeof ts, symbol: ts.Symbol, fileName:
   return fileName
 }
 
-export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): ExportModule[] => {
+export const analyzeExports = (
+  tsModule: typeof ts,
+  fileProgram: FileProgram,
+  allExportedNames: Set<string> | null,
+  detectDuplicate = false
+): ExportModule[] => {
   const { ast, program } = fileProgram
   const typeChecker = program.getTypeChecker()
 
@@ -65,15 +70,26 @@ export const analyzeExports = (tsModule: typeof ts, fileProgram: FileProgram): E
 
   return Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>)
     .map((item) => {
+      const isTypeOnly = guessIsType(tsModule, typeChecker, item)
       if (item.name === 'default') {
         return {
           name: getDefaultName(tsModule, item, basename(ast.fileName, extname(ast.fileName))),
-          isTypeOnly: guessIsType(tsModule, typeChecker, item),
+          isTypeOnly,
           default: true
         }
       }
-
-      return { name: item.name, isTypeOnly: guessIsType(tsModule, typeChecker, item), default: false }
+      const exportName = item.name
+      if (detectDuplicate) {
+        if ((item.declarations && item.declarations.length > 1) || allExportedNames?.has(exportName)) {
+          throw new Error(`Duplicate export name found: ${exportName} in file ${ast.fileName}`)
+        }
+        allExportedNames?.add(exportName)
+      }
+      return {
+        name: exportName,
+        isTypeOnly,
+        default: false
+      }
     })
 }
 

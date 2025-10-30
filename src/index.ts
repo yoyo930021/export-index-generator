@@ -50,7 +50,8 @@ program
   .arguments('<cwd>')
   .description('generate typescript or javascript index file')
   .option('-e, --external', 'generate no script type file with fileName', false)
-  .action((cwd: string, cmd: { external: boolean }) => {
+  .option('-d, --detect-duplicate', 'detect duplicate exports', false)
+  .action((cwd: string, cmd: { external: boolean, detectDuplicate: boolean }) => {
     console.time(successMessage)
     const cwdPath = resolve(process.cwd(), cwd)
     const tsModule = (() => {
@@ -64,7 +65,7 @@ program
         .sync(`**/*.${extension}`, { cwd: cwdPath }).filter((file) => !/^index\.[jt]{1}sx{0,1}$/.test(file))
         .map((path) => ({ path, content: readFileSync(resolve(cwd, path), { encoding: 'utf8' }) }))
 
-    const result = generate(tsModule, files)
+    const result = generate(tsModule, files, cmd.detectDuplicate)
     updateOrCreateFile(
       getCurrentCommand(!!cmd.external, cwd),
       resolve(cwd, `index.${getFileName(tsModule, result.scriptKind)}`),
