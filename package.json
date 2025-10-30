@@ -1,6 +1,6 @@
 {
   "name": "export-index-generator",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "packageManager": "pnpm@10.17.1",
   "description": "generate typescript or javascript index file",
   "repository": "https://github.com/yoyo930021/export-index-generator.git",
