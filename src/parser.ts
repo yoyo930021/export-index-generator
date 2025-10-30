@@ -53,13 +53,6 @@ export function getSingleFileProgram (tsModule: typeof ts, fileName: string, con
   )
 
   const ast = program.getSourceFile(fileName)
-  // DEBUG 用，先不要理會它
-  // const symbol = program.getTypeChecker().getSymbolAtLocation(ast!)
-  // if (symbol && symbol.exports) {
-  //   Array.from(symbol.exports.values() as unknown as Iterable<ts.Symbol>).forEach((item) => {
-  //     console.log(item.name)
-  //   })
-  // }
   if (!ast) {
     throw new Error('Can\'t convert code to TypeScript AST.')
   }
