@@ -20,6 +20,7 @@ export const guessIsType = (tsModule: typeof ts, typeChecker: ts.TypeChecker, sy
 
   // export { ex8, ex9 }
   if (tsModule.isExportSpecifier(declaration)) {
+    if (!(symbol.flags & tsModule.SymbolFlags.Alias)) return false
     const originalSymbol = typeChecker.getAliasedSymbol(symbol)
     if (!(originalSymbol.valueDeclaration ?? originalSymbol.declarations?.[0])) return false
     return guessIsType(tsModule, typeChecker, originalSymbol)
@@ -27,6 +28,7 @@ export const guessIsType = (tsModule: typeof ts, typeChecker: ts.TypeChecker, sy
 
   // export default ex10
   if (tsModule.isExportAssignment(declaration)) {
+    if (!(symbol.flags & tsModule.SymbolFlags.Alias)) return false
     const originalSymbol = typeChecker.getAliasedSymbol(symbol)
     if (!(originalSymbol.valueDeclaration ?? originalSymbol.declarations?.[0])) return false
     return guessIsType(tsModule, typeChecker, originalSymbol)
