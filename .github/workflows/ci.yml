@@ -79,7 +79,7 @@ jobs:
         with:
           node-version: 18.x
           cache: pnpm
-          cache-dependency-path: false
+          package-manager-cache: false
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
