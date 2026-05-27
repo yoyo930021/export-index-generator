@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
@@ -44,7 +44,7 @@ jobs:
         os: [ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
@@ -69,15 +69,15 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
           version: 10.17.1
-      - name: Use Node.js 22.x
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v4
         with:
-          node-version: 22.x
+          node-version: 24.x
           cache: pnpm
           package-manager-cache: false
       - name: Release
