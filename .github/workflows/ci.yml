@@ -12,6 +12,7 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  id-token: write  # Required for OIDC
 
 jobs:
   lint:
@@ -78,12 +79,11 @@ jobs:
         with:
           node-version: 18.x
           cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          cache-dependency-path: false
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          pnpm install --frozen-lockfile 
+          pnpm install --frozen-lockfile
           pnpm build
           pnpm semantic-release
