@@ -114,7 +114,7 @@ export const generate = (tsModule: typeof ts, files: File[], detectDuplicate = f
   const statements = files.reduce(
     (result, file) => {
       // External
-      if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path)))
+      if (!supportExtensions.some((ext) => file.path.endsWith(ext))) return result.concat(generateExports(tsModule, file.path, getExternalExports(file.path, tsModule)))
 
       // Script
       if (detectDuplicate && !allExportedNames) {

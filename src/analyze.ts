@@ -37,25 +37,34 @@ export const guessIsType = (tsModule: typeof ts, typeChecker: ts.TypeChecker, sy
   return false
 }
 
+const getFileExportName = (fileName: string, tsModule: typeof ts): string => {
+  const name = Array.from(fileName, (character) => {
+    const codePoint = character.codePointAt(0) ?? 0
+    return tsModule.isIdentifierPart(codePoint, tsModule.ScriptTarget.Latest) ? character : '_'
+  }).join('')
+  return tsModule.isIdentifierStart(name.codePointAt(0) ?? 0, tsModule.ScriptTarget.Latest) ? name : `_${name}`
+}
+
 export const getDefaultName = (tsModule: typeof ts, symbol: ts.Symbol, fileName: string): string => {
   const declaration = symbol.valueDeclaration ?? symbol.declarations?.[0]
   if (!declaration) {
     throw new Error(`No declaration for ${JSON.stringify(symbol)}`)
   }
+  const fallbackName = getFileExportName(fileName, tsModule)
 
   if (tsModule.isClassDeclaration(declaration)) {
-    return declaration.name?.escapedText as string || fileName
+    return declaration.name?.escapedText as string || fallbackName
   }
 
   if (tsModule.isExportAssignment(declaration)) {
-    return declaration.expression?.getText() || fileName
+    return tsModule.isIdentifier(declaration.expression) ? declaration.expression.text : fallbackName
   }
 
   if (tsModule.isInterfaceDeclaration(declaration)) {
-    return declaration.name.escapedText as string || fileName
+    return declaration.name.escapedText as string || fallbackName
   }
 
-  return fileName
+  return fallbackName
 }
 
 export const analyzeExports = (
@@ -95,9 +104,9 @@ export const analyzeExports = (
     })
 }
 
-export const getExternalExports = (path: string): ExportModule[] => {
+export const getExternalExports = (path: string, tsModule: typeof ts): ExportModule[] => {
   return [{
-    name: basename(path).split('.')[0],
+    name: getFileExportName(basename(path).split('.')[0], tsModule),
     isTypeOnly: false,
     default: true
   }]
